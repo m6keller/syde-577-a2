@@ -31,3 +31,14 @@ Got best accuracy of 99.33% accuracy using 30 optuna trials for study defined in
 
 Hyperparameter importance determined by Optuna showed that the initial number of channels is by far the most important architecture planner.
 
+Another one:
+==============================
+Optuna Study Finished
+Number of finished trials: 30
+
+Best trial:
+ Accuracy: 99.3000
+  Best Model Size:
+    num_conv_layers: 7
+    initial_channels: 32
+    channel_multiplier: 1.5

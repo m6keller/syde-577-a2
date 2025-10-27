@@ -6,7 +6,7 @@ from optuna.trial import Trial
 from BasicCNN import BasicCNN
 from train import train_on_mnist
 
-N_TRIALS = 30
+N_TRIALS = 15
 
 def objective(trial: Trial):
     """
@@ -19,21 +19,20 @@ def objective(trial: Trial):
     # 2-layer -> 7x7
     # 3-layer -> 3x3
     # 4-layer -> 1x1
-    num_conv_layers = trial.suggest_int('num_conv_layers', 1, 4)
+    num_conv_layers = trial.suggest_int('num_conv_layers', 7, 9)
     
-    initial_channels = trial.suggest_categorical('initial_channels', [8, 16, 32])
     channel_multiplier = trial.suggest_float('channel_multiplier', 1.0, 2.5, step=0.5)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
     model = BasicCNN(
         num_conv_layers=num_conv_layers,
-        initial_channels=initial_channels,
+        initial_channels=32,
         channel_multiplier=channel_multiplier,
         num_classes=10
     ).to(device)
 
-    _model, final_accuracy = train_on_mnist(model=model, trial=trial)
+    _model, final_accuracy = train_on_mnist(model=model, trial=trial, device=device)
 
     return final_accuracy
     
