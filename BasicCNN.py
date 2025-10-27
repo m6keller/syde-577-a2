@@ -42,32 +42,28 @@ class BasicCNN(nn.Module):
         logits = self.classifier(x)
         return logits
 
+NUM_EPOCHS = 5
+BATCH_SIZE = 64
+LEARNING_RATE = 0.001
 
 if __name__ == '__main__':
-    # --- Configuration ---
-    NUM_CONV_LAYERS = 3       # Depth: How many conv blocks
-    INITIAL_CHANNELS = 8      # Width: Channels in the first layer
-    CHANNEL_MULTIPLIER = 2.0  # Width: How much to increase channels by
+    NUM_CONV_LAYERS = 3
+    INITIAL_CHANNELS = 8
+    CHANNEL_MULTIPLIER = 2.0
 
-    # Training parameters
-    NUM_EPOCHS = 5
-    BATCH_SIZE = 64
-    LEARNING_RATE = 0.001
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    
-
     train_dataset = torchvision.datasets.MNIST(
-        root='./data', train=True, download=True, transform=transform
+        root='./data', train=True, download=True,
     )
     train_loader = DataLoader(
         train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=-1
     )
 
     test_dataset = torchvision.datasets.MNIST(
-        root='./data', train=False, download=True, transform=transform
+        root='./data', train=False, download=True,
     )
     test_loader = DataLoader(
         test_dataset, batch_size=BATCH_SIZE, shuffle=False

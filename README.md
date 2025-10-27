@@ -1,6 +1,6 @@
 # SYDE 577 Assignment 2
 
-## Sat Oct 18:
+## Sat, Oct 18:
 training params:
 - NUM_EPOCHS = 5
 - BATCH_SIZE = 64
@@ -19,4 +19,15 @@ From here we can hypertune:
 2. Training params
 3. Optimizer choice
 4. Data augmentation techniques
+
+
+## Mon, Oct 27: 
+Got best accuracy of 99.33% accuracy using 30 optuna trials for study defined in [architecture_tuning.py](architecture_tuning.py). This found the optimal architecture to be: 
+- num_conv_layers: 4 
+- initial_channels: 32
+- channel_multiplier: 2.0
+
+![Parameter Importance Breakdown](param_importances.png "Parameter Importances")
+
+Hyperparameter importance determined by Optuna showed that the initial number of channels is by far the most important architecture planner.
 
