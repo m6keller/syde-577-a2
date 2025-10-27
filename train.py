@@ -1,11 +1,14 @@
 import torch
 import numpy as np
 from tqdm import tqdm
+import optuna
 
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from datasets import load_dataset
+from optuna.trial import Trial
+
 
 from BasicCNN import BasicCNN
 
@@ -13,7 +16,13 @@ NUM_EPOCHS = 5
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001
 
-def train_on_mnist(model, num_epochs=NUM_EPOCHS, batch_size=BATCH_SIZE, learning_rate=LEARNING_RATE):
+def train_on_mnist(
+    model, 
+    num_epochs=NUM_EPOCHS, 
+    batch_size=BATCH_SIZE, 
+    learning_rate=LEARNING_RATE, 
+    trial: Trial = None
+    ):
     mnist = load_dataset("mnist")
 
     transform = transforms.Compose([
@@ -74,11 +83,16 @@ def train_on_mnist(model, num_epochs=NUM_EPOCHS, batch_size=BATCH_SIZE, learning
                 correct += (predicted == labels).sum().item()
         
         accuracy = 100 * correct / total
+        if trial is not None:
+            trial.report(accuracy, epoch)
+            if trial.should_prune():
+                raise optuna.exceptions.TrialPruned()
+
         print(f"Test Accuracy: {accuracy:.2f}%")
         
     print("-" * 30)
     print("Finished Training!")
-    return model  
+    return model, accuracy  
 
 
 def main():
