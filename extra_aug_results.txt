@@ -1,0 +1,27 @@
+(venv) navalan@MacBookPro syde-577-a2 % python3 aug4.py
+Using device: cpu
+/Users/navalan/Documents/GitHub/syde-577-a2/venv/lib/python3.11/site-packages/torch/nn/modules/lazy.py:181: UserWarning: Lazy modules are a new feature under heavy development so changes to the API or functionality can happen at any moment.
+  warnings.warn('Lazy modules are a new feature under heavy development '
+Starting training with enhanced augmentation...
+Epoch 1: Avg Training Loss = 0.3302                                                                                                                                                                         
+Validation Accuracy after epoch 1: 98.19%                                                                                                                                                                   
+Epoch 2: Avg Training Loss = 0.1313                                                                                                                                                                         
+Validation Accuracy after epoch 2: 98.78%                                                                                                                                                                   
+Epoch 3: Avg Training Loss = 0.1042                                                                                                                                                                         
+Validation Accuracy after epoch 3: 98.68%                                                                                                                                                                   
+Epoch 4: Avg Training Loss = 0.0915                                                                                                                                                                         
+Validation Accuracy after epoch 4: 99.17%                                                                                                                                                                   
+Epoch 5: Avg Training Loss = 0.0844                                                                                                                                                                         
+Validation Accuracy after epoch 5: 98.90%                                                                                                                                                                   
+Epoch 6: Avg Training Loss = 0.0770                                                                                                                                                                         
+Validation Accuracy after epoch 6: 99.19%                                                                                                                                                                   
+Epoch 7: Avg Training Loss = 0.0677                                                                                                                                                                         
+Validation Accuracy after epoch 7: 99.02%                                                                                                                                                                   
+Epoch 8: Avg Training Loss = 0.0675                                                                                                                                                                         
+Validation Accuracy after epoch 8: 99.15%                                                                                                                                                                   
+Epoch 9: Avg Training Loss = 0.0619                                                                                                                                                                         
+Validation Accuracy after epoch 9: 99.25%                                                                                                                                                                   
+Epoch 10: Avg Training Loss = 0.0637                                                                                                                                                                        
+Validation Accuracy after epoch 10: 99.19%                                                                                                                                                                  
+
+✅ Final Model Accuracy with Augmentation + TTA: 99.19%
