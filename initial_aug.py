@@ -49,7 +49,7 @@ def get_transform(trial):
 def train_and_evaluate(model, train_loader, test_loader, device):
     """Train the CNN and return final test accuracy."""
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)
 
     for epoch in range(NUM_EPOCHS):
         model.train()
@@ -108,10 +108,11 @@ def objective(trial):
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    print(f"Using device: {device}", device)
     model = BasicCNN(
-        num_conv_layers=3,
-        initial_channels=8,
+        num_conv_layers=4,
+        initial_channels=32,
         channel_multiplier=2.0,
         num_classes=10
     ).to(device)
@@ -157,7 +158,7 @@ def main():
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = BasicCNN(num_conv_layers=3, initial_channels=8,
+    model = BasicCNN(num_conv_layers=4, initial_channels=32,
                      channel_multiplier=2.0, num_classes=10).to(device)
 
     final_acc = train_and_evaluate(model, train_loader, test_loader, device)
