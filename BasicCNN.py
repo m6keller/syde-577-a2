@@ -39,7 +39,6 @@ class BasicCNN(nn.Module):
             layers.append(nn.ReLU(inplace=True))
             layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
 
-            # Optional dropout after each conv block
             if dropout_conv > 0:
                 layers.append(nn.Dropout2d(p=dropout_conv))
 

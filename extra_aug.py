@@ -8,31 +8,52 @@ from datasets import load_dataset
 from BasicCNN import BasicCNN
 
 # --- constants ---
-NUM_EPOCHS = 10   # slightly longer training
+NUM_EPOCHS = 5   
 BATCH_SIZE = 64
 LEARNING_RATE = 0.001
 
 
-def get_best_transform():
-    """Return improved augmentation transform based on best Optuna parameters + new helpful aug."""
-    return transforms.Compose([
+# AUG PARAMS
+ROTATION_DEG = 14.77
+TRANSLATE_X = 0.0771
+TRANSLATE_Y = 0.1117
+SCALE_MIN = 0.892
+SCALE_MAX = 1.084
+SHEAR_DEG = 14.81
+ERASE_PROB = 0.236
+ERASE_SCALE = 0.108
+ERASE_RATIO = 0.688
+
+
+def get_transform(
+    rotation_deg=ROTATION_DEG,
+    translate_x=TRANSLATE_X,
+    translate_y=TRANSLATE_Y,
+    scale_min=SCALE_MIN,
+    scale_max=SCALE_MAX,
+    shear_deg=SHEAR_DEG,
+    erase_prob=ERASE_PROB,
+    erase_scale=ERASE_SCALE,
+    erase_ratio=ERASE_RATIO
+):
+    """Define augmentation pipeline with Optuna-sampled hyperparameters."""
+    transform = transforms.Compose([
         transforms.Resize((64, 64)),
         transforms.RandomAffine(
-            degrees=20.6,
-            translate=(0.05, 0.05),
-            scale=(0.96, 1.05),
-            shear=4.4
+            degrees=rotation_deg,
+            translate=(translate_x, translate_y),
+            scale=(scale_min, scale_max),
+            shear=shear_deg
         ),
-        transforms.ColorJitter(contrast=0.2),  # slight contrast jitter helps robustness
-        transforms.RandomApply([transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 1.0))], p=0.2),
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,)),
         transforms.RandomErasing(
-            p=0.32,
-            scale=(0.04, 0.08),
-            ratio=(0.7, 1.3)
+            p=erase_prob,
+            scale=(erase_scale, erase_scale * 2),
+            ratio=(erase_ratio / 2, erase_ratio)
         ),
     ])
+    return transform
 
 
 def get_test_transform():
@@ -46,7 +67,7 @@ def get_test_transform():
 
 def train_and_evaluate(model, train_loader, test_loader, device):
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)
 
     for epoch in range(NUM_EPOCHS):
         model.train()
@@ -106,8 +127,8 @@ def test_with_tta(model, test_loader, device, n_augmentations=5):
 def main():
     mnist = load_dataset("mnist")
 
-    transform = get_best_transform()
-    test_transform = get_test_transform()
+    transform = get_transform()
+    test_transform = get_transform() 
 
     def transform_batch(batch):
         batch['image'] = [transform(img) for img in batch['image']]
@@ -123,12 +144,12 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     print(f"Using device: {device}")
 
     model = BasicCNN(
-        num_conv_layers=3,
-        initial_channels=8,
+        num_conv_layers=4,
+        initial_channels=32,
         channel_multiplier=2.0,
         num_classes=10
     ).to(device)
